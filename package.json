@@ -1,0 +1,22 @@
+{
+  "name": "pwr-webgl-project",
+  "version": "1.0.0",
+  "description": "Project made during Grafika Komputerowa classes",
+  "main": "index.js",
+  "author": {
+    "name": "Szymon Wisniewski",
+    "email": "szymwisn@mgmail.com",
+    "url": "https://github.com/szymwisn"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "browserify": "^8.1.1",
+    "canvas-testbed": "^1.0.3",
+    "scriptjs": "^2.5.7",
+    "three": "^0.82.1",
+    "wzrd": "^1.2.1"
+  },
+  "scripts": {
+    "start": "wzrd app.js"
+  }
+}
