@@ -1,13 +1,9 @@
-let renderer, scene, camera, group, controls;
+let renderer, scene, camera, group;
 let mouseX = 0;
 let mouseY = 0;
 
-let skull, colt, leftEye, rightEye;
-let pointLights = [];
+let skull, leftColt, rightColt, leftEye, rightEye;
 let smokeParticles = [];
-
-init();
-animate();
 
 function init() {
     renderer = new THREE.WebGLRenderer({
@@ -25,18 +21,18 @@ function init() {
 
     scene = new THREE.Scene();
 
-    let light = new THREE.SpotLight(0x6042f5, 0.5);
+    const light = new THREE.SpotLight(0x6042f5, 0.5);
     light.position.set(-51, -20, 51);
     scene.add(light);
 
     group = new THREE.Group();
     group.position.x = 2;
 
-    let pointLight = new THREE.PointLight(0x124589, 1);
+    const pointLight = new THREE.PointLight(0x124589, 1);
     pointLight.position.set(-2, -20, 20.);
     scene.add(pointLight);
 
-    let pointLight2 = new THREE.PointLight(0xD01D44, 0.5);
+    const pointLight2 = new THREE.PointLight(0xD01D44, 0.5);
     pointLight2.position.set(20, 10, 15);
     scene.add(pointLight2);
 
@@ -52,6 +48,7 @@ function init() {
         colt.position.set(8, -10, 5);
         colt.rotation.set(0, Math.PI, 0);
         colt.scale.y = colt.scale.z = colt.scale.x = 1.8;
+        rightColt = colt;
         group.add(colt);
     });
 
@@ -59,59 +56,50 @@ function init() {
         colt.position.set(-12, 10, -15);
         colt.rotation.set(3 * Math.PI / 2, Math.PI, 0.5);
         colt.scale.y = colt.scale.z = colt.scale.x = 1.8;
+        leftColt = colt;
         group.add(colt);
     });
 
     const textureLoader = new THREE.TextureLoader();
 
-    let texture = textureLoader.load('models/eye-texture2.jpg');
-    texture.offset.x = 0.25;
+    const eyeTexture = textureLoader.load('models/eye-texture2.jpg');
+    eyeTexture.offset.x = 0.25;
 
-    let geometry = new THREE.SphereGeometry(1.3, 32, 32);
+    const eyeGeometry = new THREE.SphereGeometry(1.3, 32, 32);
 
-    let material = new THREE.MeshStandardMaterial({
-        map: texture
+    const eyeMaterial = new THREE.MeshStandardMaterial({
+        map: eyeTexture
     });
 
-    material.shininess = 100;
-    leftEye = new THREE.Mesh(geometry, material);
+    eyeMaterial.shininess = 100;
+
+    leftEye = new THREE.Mesh(eyeGeometry, eyeMaterial);
     leftEye.position.set(-2.3, 1.90, 4.5);
-
-    rightEye = new THREE.Mesh(geometry, material);
-    rightEye.position.set(2.3, 1.9, 4.5);
-
     group.add(leftEye);
+
+    rightEye = new THREE.Mesh(eyeGeometry, eyeMaterial);
+    rightEye.position.set(2.3, 1.9, 4.5);
     group.add(rightEye);
 
     scene.add(group);
 
-    geometry = new THREE.CubeGeometry(100, 100, 100);
+    const smokeTexture = textureLoader.load('https://s3-us-west-2.amazonaws.com/s.cdpn.io/95637/Smoke-Element.png');
 
-    material = new THREE.MeshLambertMaterial({
-        color: 0xaa6666,
-        wireframe: false
-    });
-
-    mesh = new THREE.Mesh(geometry, material);
-
-    let smokeTexture = textureLoader.load('https://s3-us-west-2.amazonaws.com/s.cdpn.io/95637/Smoke-Element.png');
-
-    let smokeMaterial = new THREE.MeshLambertMaterial({
+    const smokeMaterial = new THREE.MeshLambertMaterial({
         color: 0x44D061,
         map: smokeTexture,
         transparent: true
     });
 
-    let smokeGeo = new THREE.PlaneGeometry(200, 200);
+    const smokeGeometry = new THREE.PlaneGeometry(200, 200);
 
     for (let i = 0; i < 70; i++) {
-        let particle = new THREE.Mesh(smokeGeo, smokeMaterial);
+        let particle = new THREE.Mesh(smokeGeometry, smokeMaterial);
         particle.position.set(Math.random() * 500 - 250, Math.random() * 500 - 250, -50);
         particle.rotation.z = Math.random() * 360;
         scene.add(particle);
         smokeParticles.push(particle);
     }
-
 
     window.addEventListener('resize', onWindowResize, false);
 
@@ -150,9 +138,10 @@ function animate() {
         leftEye.rotation.x = rightEye.rotation.x = mouseY * -.45;
     }
 
-    if (colt) {
-        colt.rotation.y = mouseX * .45;
-        colt.rotation.x = mouseY * -.45;
+    if (rightColt && leftColt) {
+        leftColt.rotation.x = mouseY * .2;
+        rightColt.rotation.x = mouseY * .2;
+        rightColt.rotation.z = mouseX * .2;
     }
 
     for (let particle = 0; particle < smokeParticles.length; particle++) {
@@ -161,3 +150,6 @@ function animate() {
 
     render();
 };
+
+init();
+animate();
